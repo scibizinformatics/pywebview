@@ -26,7 +26,7 @@ class BrowserView:
     instance = None
 
     def __init__(self, title, url, width, height, resizable, fullscreen, min_size,
-                 confirm_quit, background_color, webview_ready):
+                 confirm_quit, background_color, webview_ready, destroy_callback=None):
         BrowserView.instance = self
 
         self.webview_ready = webview_ready
@@ -61,6 +61,8 @@ class BrowserView:
         self.window = window
 
         if confirm_quit:
+            if destroy_callback:
+                destroy_callback()
             self.window.connect('delete-event', self.on_destroy)
         else:
             self.window.connect('delete-event', gtk.main_quit)
@@ -179,9 +181,9 @@ class BrowserView:
 
 
 def create_window(title, url, width, height, resizable, fullscreen, min_size,
-                  confirm_quit, background_color, webview_ready):
+                  confirm_quit, background_color, webview_ready, destroy_callback=None):
     browser = BrowserView(title, url, width, height, resizable, fullscreen,
-                          min_size, confirm_quit, background_color, webview_ready)
+                          min_size, confirm_quit, background_color, webview_ready, destroy_callback=destroy_callback)
     browser.show()
 
 
