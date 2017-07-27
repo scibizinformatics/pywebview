@@ -31,6 +31,7 @@ class BrowserView:
 
         self.webview_ready = webview_ready
         self.is_fullscreen = False
+        self.destroy_callback = destroy_callback
 
         Gdk.threads_init()
         window = gtk.Window(title=title)
@@ -61,8 +62,6 @@ class BrowserView:
         self.window = window
 
         if confirm_quit:
-            if destroy_callback:
-                destroy_callback()
             self.window.connect('delete-event', self.on_destroy)
         else:
             self.window.connect('delete-event', gtk.main_quit)
@@ -87,6 +86,8 @@ class BrowserView:
                                           type=gtk.MessageType.QUESTION, buttons=gtk.ButtonsType.OK_CANCEL,
                                           message_format=localization['global.quitConfirmation'])
         result = dialog.run()
+        # Execute the destroy callback
+        self.destroy_callback()
         if result == gtk.ResponseType.OK:
             gtk.main_quit()
         else:
